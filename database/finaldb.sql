@@ -165,8 +165,6 @@ END //
 
 DELIMITER ;
 
-CALL BorrowBook(1, 1);
-
 DELIMITER //
 
 CREATE PROCEDURE ReturnBook(
@@ -216,4 +214,43 @@ CALL ReturnBook(1);
 SELECT BookID, Quantity FROM Books WHERE BookID = 1;
 SHOW INDEX FROM Books;
 
+DELIMITER //
+CREATE FUNCTION fn_DaysOverdue(p_BorrowID INT)
+RETURNS INT
+NOT DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE borrow_dt DATETIME;
+    DECLARE days_diff INT;
 
+    SELECT BorrowDate INTO borrow_dt
+    FROM Borrowing
+    WHERE BorrowID = p_BorrowID AND Status = 'Borrowed';
+
+    IF borrow_dt IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    SET days_diff = DATEDIFF(NOW(), borrow_dt);
+    RETURN days_diff;
+END //
+DELIMITER ;
+
+CREATE VIEW View_OverdueReport AS
+SELECT
+    r.ReaderName,
+    b.BookName,
+    br.BorrowDate,
+    fn_DaysOverdue(br.BorrowID) AS DaysOverdue
+FROM Borrowing br
+JOIN Readers r ON br.ReaderID = r.ReaderID
+JOIN Books   b ON br.BookID   = b.BookID
+WHERE br.Status = 'Borrowed'
+  AND fn_DaysOverdue(br.BorrowID) > 7;
+
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL 10 DAY WHERE BorrowID = 1;
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL 15 DAY WHERE BorrowID = 4;
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL  8 DAY WHERE BorrowID = 6;
+
+SELECT * FROM View_OverdueReport;
+SELECT fn_DaysOverdue(1);

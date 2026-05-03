@@ -1,0 +1,883 @@
+\documentclass[12pt,a4paper]{report}
+
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\setlength{\headheight}{13.6pt}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{float}
+
+% ── Graphics path ─────────────────────────────────────────────────────────────
+\graphicspath{{final_database/docs/screenshots/}}
+
+% ── Page geometry ─────────────────────────────────────────────────────────────
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm}
+
+% ── Colors ────────────────────────────────────────────────────────────────────
+\definecolor{codeblue}{RGB}{0,0,180}
+\definecolor{codegray}{RGB}{128,128,128}
+\definecolor{codegreen}{RGB}{0,128,0}
+\definecolor{codeback}{RGB}{248,248,248}
+\definecolor{NEUblue}{RGB}{0,70,127}
+
+% ── Listings styles ───────────────────────────────────────────────────────────
+\lstdefinestyle{sqlstyle}{
+  language=SQL,
+  backgroundcolor=\color{codeback},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  frame=single, framerule=0.4pt, rulecolor=\color{gray!50},
+  breaklines=true, captionpos=b, showstringspaces=false, tabsize=2
+}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  backgroundcolor=\color{codeback},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{codegray}\itshape,
+  frame=single, framerule=0.4pt, rulecolor=\color{gray!50},
+  breaklines=true, captionpos=b, showstringspaces=false, tabsize=4
+}
+
+% ── Header / Footer ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Library Management System}
+\fancyhead[R]{\small Introduction to Databases}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Section formatting ────────────────────────────────────────────────────────
+\titleformat{\chapter}[block]
+  {\normalfont\Large\bfseries\color{NEUblue}}{\thechapter.}{0.8em}{}
+\titlespacing{\chapter}{0pt}{20pt}{12pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{NEUblue}}{\thesection}{0.8em}{}
+\titlespacing{\section}{0pt}{14pt}{6pt}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{0.8em}{}
+
+% ── Hyperref ─────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true, linkcolor=NEUblue, urlcolor=codeblue, citecolor=black,
+  pdftitle={Library Management System}, pdfauthor={Bui Vi Anh}
+}
+
+\setstretch{1.3}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ── Screenshot helper ─────────────────────────────────────────────────────────
+\newcommand{\screenshot}[2]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\linewidth]{#1}
+    \caption{#2}
+  \end{figure}%
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ── Title page ────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+  {\Large\bfseries NATIONAL ECONOMICS UNIVERSITY\\[4pt]}
+  {\large College of Technology\\[1cm]}
+  \includegraphics[width=0.30\linewidth]{img00_neu_logo.png}\\[1cm]
+  \rule{\linewidth}{1.5pt}\\[0.4cm]
+  {\Large\bfseries PROJECT 01}\\[0.3cm]
+  {\Huge\bfseries\color{NEUblue} Library Management System}\\[0.4cm]
+  \rule{\linewidth}{1.5pt}\\[2cm]
+  \begin{tabular}{ll}
+    \textbf{Subject:}    & Introduction to Databases \\[6pt]
+    \textbf{Instructor:} & Mr.\ Tran Hung \\[6pt]
+    \textbf{Name:}       & Bui Vi Anh - DS66B \\[6pt]
+    \textbf{Student ID:} & 11247122 \\[6pt]
+    \textbf{Github:}     & \href{https://github.com/pipotht/Library-Management-System}
+                           {\texttt{github.com/pipotht/Library-Management-System}} \\
+  \end{tabular}
+  \vfill
+  {\small Hanoi, 2026}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Introduction}
+
+\section{Project Overview}
+
+This report documents the design, implementation, and demonstration of a Library Management
+System built as the final project for the Introduction to Databases course at the National
+Economics University. The system uses MySQL as the relational database engine and Python as
+the application programming layer.
+
+A library management system is a practical and well-defined domain for demonstrating core
+database concepts: normalized table design, referential integrity, transactional operations, and
+automated behavior via triggers and stored procedures. The project covers the full lifecycle from
+schema design to a working console application.
+
+The source code is organized as follows:
+\begin{itemize}
+  \item \texttt{database/finaldb.sql} -- Full SQL script: schema, sample data, indexes,
+        views, stored procedures, triggers, and UDF.
+  \item \texttt{src/main.py} -- Python CLI application.
+\end{itemize}
+
+\section{Objectives}
+
+\begin{itemize}
+  \item Design a fully normalized relational database schema that covers books, authors,
+        categories, readers, and borrowing transactions.
+  \item Implement advanced database objects: indexes, views, stored procedures, triggers,
+        and user-defined functions.
+  \item Develop a Python CLI application that exposes all core functionalities through an
+        interactive menu system.
+  \item Enforce data integrity at the database level through constraints, foreign keys,
+        and triggers.
+  \item Apply basic database security and administration principles.
+\end{itemize}
+
+\section{Technologies}
+
+\begin{table}[H]
+  \centering
+  \caption{Technology Stack}
+  \begin{tabularx}{\linewidth}{L{4cm} X}
+    \toprule
+    \textbf{Component} & \textbf{Details} \\
+    \midrule
+    DBMS                 & MySQL 8.x \\
+    Programming Language & Python 3.x \\
+    DB Connector         & mysql-connector-python \\
+    Output Formatting    & tabulate (fancy\_grid) \\
+    SQL Script           & \texttt{database/finaldb.sql} \\
+    Application          & \texttt{src/main.py} \\
+    Development Tools    & MySQL Workbench, VS Code, Terminal \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{System Analysis \& Requirements}
+
+\section{Functional Requirements}
+
+\subsection*{Book Management}
+\begin{itemize}
+  \item View the full book catalog with author and category details.
+  \item Add new books with confirmation before inserting.
+  \item Edit book quantity.
+  \item Delete a book (with confirmation and FK protection).
+  \item Search books by name using partial keyword matching (\texttt{LIKE}).
+\end{itemize}
+
+\subsection*{Reader Management}
+\begin{itemize}
+  \item View all registered readers.
+  \item Register a new reader (name, address, phone).
+  \item Update reader address and phone number.
+\end{itemize}
+
+\subsection*{Author \& Category Management}
+\begin{itemize}
+  \item View, add, and delete authors.
+  \item View, add, and delete categories.
+\end{itemize}
+
+\subsection*{Borrowing \& Returning}
+\begin{itemize}
+  \item Borrow a book: validates reader and book existence, shows available quantity,
+        calls stored procedure \texttt{BorrowBook}.
+  \item Return a book: shows borrow details and days borrowed, warns if overdue,
+        calls stored procedure \texttt{ReturnBook}.
+  \item Prevents returning an already-returned record.
+\end{itemize}
+
+\subsection*{Reports}
+\begin{itemize}
+  \item Full borrowing report showing all transactions with status.
+  \item Overdue report using UDF \texttt{fn\_DaysOverdue} to calculate days borrowed
+        and filter records exceeding 7 days.
+  \item Statistical summary: total books, readers, and borrowing counts.
+  \item Top 5 most borrowed books.
+\end{itemize}
+
+\section{Non-Functional Requirements}
+
+\begin{table}[H]
+  \centering
+  \caption{Non-Functional Requirements}
+  \begin{tabularx}{\linewidth}{L{3.5cm} X}
+    \toprule
+    \textbf{Requirement} & \textbf{Implementation} \\
+    \midrule
+    Data Integrity & Foreign keys, CHECK constraints, NOT NULL, UNIQUE \\
+    Automation     & Triggers auto-update book quantity on borrow/return \\
+    Performance    & Indexes on \texttt{BookName} and \texttt{AuthorID} columns \\
+    Usability      & Numbered CLI menu with confirmation prompts \\
+    Error Handling & try/except blocks, status validation before return \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Entity Relationships}
+
+\begin{itemize}
+  \item \textbf{Categories $\rightarrow$ Books:} A category can classify many books (1:N).
+  \item \textbf{Authors $\rightarrow$ Books:} An author can write many books (1:N).
+  \item \textbf{Readers $\rightarrow$ Borrowing:} One reader can have many borrowing records (1:N).
+  \item \textbf{Books $\rightarrow$ Borrowing:} One book can appear in many borrowing records (1:N).
+\end{itemize}
+
+\section{Entity Relationship Diagram (ERD)}
+
+The ERD illustrates the logical structure of the database and ensures that
+all relationships are properly normalized and free from redundancy. Each entity
+is uniquely identified by a primary key, while foreign keys enforce referential
+integrity across related tables.
+
+\screenshot{erd.png}{Entity Relationship Diagram of the Library Management System}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Database Design \& Implementation}
+
+\section{Schema Overview}
+
+The database \texttt{LibraryDB} consists of five tables defined in
+\texttt{database/finaldb.sql}. All foreign keys use \texttt{ON DELETE RESTRICT} to
+prevent orphaned records, and \texttt{ON UPDATE CASCADE} to propagate ID changes
+automatically.
+
+\section{Table Structures}
+
+\subsection{Categories}
+\begin{table}[H]
+  \centering
+  \caption{Categories Table}
+  \begin{tabular}{L{3cm} L{3cm} L{6cm}}
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Constraints} \\
+    \midrule
+    CategoryID   & INT          & PRIMARY KEY, AUTO\_INCREMENT \\
+    CategoryName & VARCHAR(100) & NOT NULL, UNIQUE \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Authors}
+\begin{table}[H]
+  \centering
+  \caption{Authors Table}
+  \begin{tabular}{L{3cm} L{3cm} L{6cm}}
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Constraints} \\
+    \midrule
+    AuthorID   & INT          & PRIMARY KEY, AUTO\_INCREMENT \\
+    AuthorName & VARCHAR(100) & NOT NULL \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Books}
+\begin{table}[H]
+  \centering
+  \caption{Books Table}
+  \begin{tabular}{L{3cm} L{3cm} L{6cm}}
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Constraints} \\
+    \midrule
+    BookID      & INT          & PRIMARY KEY, AUTO\_INCREMENT \\
+    BookName    & VARCHAR(255) & NOT NULL \\
+    AuthorID    & INT          & NOT NULL, FK $\rightarrow$ Authors(AuthorID) \\
+    PublishYear & INT          & --- \\
+    Quantity    & INT          & NOT NULL, DEFAULT 0, CHECK ($\geq$ 0) \\
+    CategoryID  & INT          & NOT NULL, FK $\rightarrow$ Categories(CategoryID) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Readers}
+\begin{table}[H]
+  \centering
+  \caption{Readers Table}
+  \begin{tabular}{L{3cm} L{3cm} L{6cm}}
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Constraints} \\
+    \midrule
+    ReaderID    & INT          & PRIMARY KEY, AUTO\_INCREMENT \\
+    ReaderName  & VARCHAR(100) & NOT NULL \\
+    Address     & VARCHAR(255) & --- \\
+    PhoneNumber & VARCHAR(20)  & NOT NULL, UNIQUE \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Borrowing}
+\begin{table}[H]
+  \centering
+  \caption{Borrowing Table}
+  \begin{tabular}{L{3cm} L{3cm} L{6cm}}
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Constraints} \\
+    \midrule
+    BorrowID   & INT         & PRIMARY KEY, AUTO\_INCREMENT \\
+    ReaderID   & INT         & NOT NULL, FK $\rightarrow$ Readers(ReaderID) \\
+    BookID     & INT         & NOT NULL, FK $\rightarrow$ Books(BookID) \\
+    BorrowDate & DATETIME    & NOT NULL, DEFAULT CURRENT\_TIMESTAMP \\
+    ReturnDate & DATETIME    & Nullable --- set on return \\
+    Status     & VARCHAR(20) & NOT NULL, DEFAULT `Borrowed',
+                               CHECK IN ('Borrowed','Returned') \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Sample Data}
+
+\begin{table}[H]
+  \centering
+  \caption{Sample Data Summary}
+  \begin{tabularx}{\linewidth}{L{3cm} C{1.8cm} X}
+    \toprule
+    \textbf{Table} & \textbf{Records} & \textbf{Notes} \\
+    \midrule
+    Categories & 10 & Novel, Science, History, Technology, Education,
+                      Psychology, Business, Art, Children, Philosophy \\
+    Authors    & 10 & Mix of Vietnamese and international authors \\
+    Books      & 10 & Titles spanning 1934--2011, quantities 5--20 \\
+    Readers    & 10 & Readers from cities across Vietnam \\
+    Borrowing  & 10 & Mix of Borrowed and Returned; 3 records backdated
+                      to simulate overdue \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Three borrowing records were manually backdated to simulate overdue scenarios:
+
+\begin{lstlisting}[style=sqlstyle]
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL 10 DAY WHERE BorrowID = 1;
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL 15 DAY WHERE BorrowID = 4;
+UPDATE Borrowing SET BorrowDate = NOW() - INTERVAL  8 DAY WHERE BorrowID = 6;
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Advanced Database Objects}
+
+\section{Indexes}
+
+\begin{lstlisting}[style=sqlstyle]
+CREATE INDEX idx_bookname ON Books(BookName);
+CREATE INDEX idx_author   ON Books(AuthorID);
+\end{lstlisting}
+
+\texttt{idx\_bookname} accelerates \texttt{LIKE}-based keyword searches in the
+\texttt{search\_book()} function. \texttt{idx\_author} speeds up \texttt{JOIN} operations
+between \texttt{Books} and \texttt{Authors}, which appear in nearly every query that
+displays book details.
+
+\section{Views}
+
+\subsection{View\_BookDetails}
+
+\begin{lstlisting}[style=sqlstyle, caption={View\_BookDetails}]
+CREATE VIEW View_BookDetails AS
+SELECT b.BookID, b.BookName, a.AuthorName,
+       c.CategoryName, b.Quantity
+FROM Books b
+JOIN Authors    a ON b.AuthorID   = a.AuthorID
+JOIN Categories c ON b.CategoryID = c.CategoryID;
+\end{lstlisting}
+
+\subsection{View\_BorrowingReport}
+
+\begin{lstlisting}[style=sqlstyle, caption={View\_BorrowingReport}]
+CREATE VIEW View_BorrowingReport AS
+SELECT r.ReaderName, b.BookName,
+       br.BorrowDate, br.ReturnDate, br.Status
+FROM Borrowing br
+JOIN Readers r ON br.ReaderID = r.ReaderID
+JOIN Books   b ON br.BookID   = b.BookID;
+\end{lstlisting}
+
+\subsection{View\_OverdueReport}
+
+This view calls \texttt{fn\_DaysOverdue()} to ensure the overdue calculation
+is consistent with the UDF used in the Python application.
+
+\begin{lstlisting}[style=sqlstyle, caption={View\_OverdueReport}]
+CREATE VIEW View_OverdueReport AS
+SELECT r.ReaderName, b.BookName, br.BorrowDate,
+       fn_DaysOverdue(br.BorrowID) AS DaysOverdue
+FROM Borrowing br
+JOIN Readers r ON br.ReaderID = r.ReaderID
+JOIN Books   b ON br.BookID   = b.BookID
+WHERE br.Status = 'Borrowed'
+  AND fn_DaysOverdue(br.BorrowID) > 7;
+\end{lstlisting}
+
+\section{Stored Procedures}
+
+\subsection{BorrowBook(p\_ReaderID, p\_BookID)}
+
+\begin{lstlisting}[style=sqlstyle, caption={Stored Procedure: BorrowBook}]
+CREATE PROCEDURE BorrowBook(IN p_ReaderID INT, IN p_BookID INT)
+BEGIN
+  DECLARE book_qty INT;
+  SELECT Quantity INTO book_qty FROM Books WHERE BookID = p_BookID;
+  IF book_qty > 0 THEN
+    INSERT INTO Borrowing (ReaderID, BookID, BorrowDate, Status)
+    VALUES (p_ReaderID, p_BookID, NOW(), 'Borrowed');
+  ELSE
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Book is out of stock';
+  END IF;
+END
+\end{lstlisting}
+
+\subsection{ReturnBook(p\_BorrowID)}
+
+\begin{lstlisting}[style=sqlstyle, caption={Stored Procedure: ReturnBook}]
+CREATE PROCEDURE ReturnBook(IN p_BorrowID INT)
+BEGIN
+  UPDATE Borrowing
+  SET Status = 'Returned', ReturnDate = NOW()
+  WHERE BorrowID = p_BorrowID;
+END
+\end{lstlisting}
+
+\section{Triggers}
+
+\subsection{trg\_reduce\_quantity}
+
+Fires \texttt{AFTER INSERT} on \texttt{Borrowing} and decrements the book's
+\texttt{Quantity} by 1 automatically.
+
+\begin{lstlisting}[style=sqlstyle, caption={Trigger: trg\_reduce\_quantity}]
+CREATE TRIGGER trg_reduce_quantity
+AFTER INSERT ON Borrowing FOR EACH ROW
+BEGIN
+  UPDATE Books SET Quantity = Quantity - 1
+  WHERE BookID = NEW.BookID;
+END
+\end{lstlisting}
+
+\subsection{trg\_increase\_quantity}
+
+Fires \texttt{AFTER UPDATE} on \texttt{Borrowing} and increments \texttt{Quantity}
+by 1 when the status changes to \texttt{'Returned'}.
+
+\begin{lstlisting}[style=sqlstyle, caption={Trigger: trg\_increase\_quantity}]
+CREATE TRIGGER trg_increase_quantity
+AFTER UPDATE ON Borrowing FOR EACH ROW
+BEGIN
+  IF NEW.Status = 'Returned' THEN
+    UPDATE Books SET Quantity = Quantity + 1
+    WHERE BookID = NEW.BookID;
+  END IF;
+END
+\end{lstlisting}
+
+\section{User-Defined Function}
+
+\subsection{fn\_DaysOverdue(p\_BorrowID)}
+
+Returns the number of days elapsed since the borrow date for any record
+still in \texttt{'Borrowed'} status. Returns 0 if the record has already
+been returned or the \texttt{BorrowID} is invalid.
+
+\begin{lstlisting}[style=sqlstyle, caption={UDF: fn\_DaysOverdue}]
+CREATE FUNCTION fn_DaysOverdue(p_BorrowID INT)
+RETURNS INT
+NOT DETERMINISTIC
+READS SQL DATA
+BEGIN
+  DECLARE borrow_dt  DATETIME;
+  DECLARE days_diff  INT;
+  SELECT BorrowDate INTO borrow_dt
+  FROM Borrowing
+  WHERE BorrowID = p_BorrowID AND Status = 'Borrowed';
+  IF borrow_dt IS NULL THEN RETURN 0; END IF;
+  SET days_diff = DATEDIFF(NOW(), borrow_dt);
+  RETURN days_diff;
+END
+\end{lstlisting}
+
+Usage in \texttt{src/main.py} (function \texttt{overdue\_with\_udf()}):
+
+\begin{lstlisting}[style=sqlstyle]
+SELECT r.ReaderName, b.BookName, br.BorrowDate,
+       fn_DaysOverdue(br.BorrowID) AS DaysOverdue
+FROM Borrowing br
+JOIN Readers r ON br.ReaderID = r.ReaderID
+JOIN Books   b ON br.BookID   = b.BookID
+WHERE br.Status = 'Borrowed'
+  AND fn_DaysOverdue(br.BorrowID) > 7
+ORDER BY DaysOverdue DESC;
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Python Application Development}
+
+\section{Architecture}
+
+The application is a single-file console program (\texttt{src/main.py}) that connects to
+\texttt{LibraryDB} using \texttt{mysql-connector-python} and presents a hierarchical
+numbered menu. All output tables are formatted using the \texttt{tabulate} library with
+the \texttt{fancy\_grid} style.
+
+\section{Database Connection}
+
+\begin{lstlisting}[style=pythonstyle]
+import mysql.connector
+from tabulate import tabulate
+from datetime import datetime
+
+conn = mysql.connector.connect(
+    host     = 'localhost',
+    user     = 'root',
+    password = '****',
+    database = 'LibraryDB'
+)
+cursor = conn.cursor()
+\end{lstlisting}
+
+\section{Menu Structure}
+
+\begin{table}[H]
+  \centering
+  \caption{Application Menu Structure}
+  \begin{tabularx}{\linewidth}{C{0.5cm} L{4.5cm} X}
+    \toprule
+    \textbf{\#} & \textbf{Menu} & \textbf{Options} \\
+    \midrule
+    1 & Book Management     & View / Add / Edit / Delete / Search \\
+    2 & Reader Management   & View / Add / Update \\
+    3 & Author Management   & View / Add / Delete \\
+    4 & Category Management & View / Add / Delete \\
+    5 & Borrow / Return     & Borrow Book / Return Book \\
+    6 & Reports             & Borrow Details / Overdue / Statistics / Top Books \\
+    7 & Exit                & Terminate the application \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Function Reference}
+
+\begin{table}[H]
+  \centering
+  \caption{Python Function Reference -- src/main.py}
+  \begin{tabularx}{\linewidth}{L{4.5cm} X}
+    \toprule
+    \textbf{Function} & \textbf{Description} \\
+    \midrule
+    \texttt{view\_books()}                        & JOIN query across Books, Authors, Categories \\
+    \texttt{add\_book()}                          & Validates author/category, confirm prompt, INSERT \\
+    \texttt{edit\_book()}                         & UPDATE Quantity for a given BookID \\
+    \texttt{delete\_book()}                       & Confirm name before DELETE \\
+    \texttt{search\_book()}                       & LIKE \%keyword\% search with full JOIN output \\
+    \texttt{view\_reader()}                       & SELECT * FROM Readers \\
+    \texttt{add\_reader()}                        & INSERT with confirm; phone uniqueness enforced by DB \\
+    \texttt{update\_reader()}                     & UPDATE Address and PhoneNumber by ReaderID \\
+    \texttt{view\_authors()}                      & SELECT * FROM Authors \\
+    \texttt{add\_author() / delete\_author()}     & INSERT / DELETE with confirm \\
+    \texttt{view\_categories()}                   & SELECT * FROM Categories \\
+    \texttt{add\_category() / delete\_category()} & INSERT / DELETE with confirm \\
+    \texttt{borrow\_book()}                       & Validates reader+book, calls BorrowBook proc \\
+    \texttt{return\_book()}                       & Checks Status, shows days borrowed, calls ReturnBook \\
+    \texttt{report()}                             & Full borrowing history with BorrowID and Status \\
+    \texttt{overdue\_with\_udf()}                 & Calls \texttt{fn\_DaysOverdue()}, filters $>$ 7 days \\
+    \texttt{stats()}                              & COUNT queries: books, readers, borrow/return counts \\
+    \texttt{top\_books()}                         & GROUP BY BookName ORDER BY COUNT DESC LIMIT 5 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Key Implementation Details}
+
+\subsection{Stored Procedure Calls}
+
+\begin{lstlisting}[style=pythonstyle]
+# Borrow a book
+cursor.callproc('BorrowBook', [rid, bid])
+conn.commit()
+
+# Return a book
+cursor.callproc('ReturnBook', [borrow_id])
+conn.commit()
+\end{lstlisting}
+
+\subsection{Overdue Detection in CLI}
+
+The \texttt{return\_book()} function computes days borrowed locally and warns
+the user before confirming the return:
+
+\begin{lstlisting}[style=pythonstyle]
+from datetime import datetime
+
+borrow_date = data[3]          # DATETIME from DB
+days = (datetime.now() - borrow_date).days
+if days > 7:
+    print('OVERDUE! Late return!')
+\end{lstlisting}
+
+\subsection{Duplicate Return Prevention}
+
+\begin{lstlisting}[style=pythonstyle]
+if data[4] == 'Returned':
+    print('This book has already been returned!')
+    return
+\end{lstlisting}
+
+\subsection{Error Handling}
+
+\begin{lstlisting}[style=pythonstyle]
+try:
+    cursor.callproc('BorrowBook', [rid, bid])
+    conn.commit()
+    cursor.execute('SELECT MAX(BorrowID) FROM Borrowing')
+    borrow_id = cursor.fetchone()[0]
+    print(f'Borrow successful! Borrow ID = {borrow_id}')
+except Exception as e:
+    print('Error:', e)
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Database Security \& Administration}
+
+\section{User Management \& Permissions}
+
+\begin{table}[H]
+  \centering
+  \caption{Proposed Database Roles}
+  \begin{tabularx}{\linewidth}{L{3cm} L{2.5cm} X}
+    \toprule
+    \textbf{User} & \textbf{Host} & \textbf{Privileges} \\
+    \midrule
+    app\_user    & localhost & SELECT, INSERT, UPDATE on all tables;
+                               EXECUTE on stored procedures \\
+    report\_user & localhost & SELECT only on View\_BookDetails,
+                               View\_BorrowingReport, View\_OverdueReport \\
+    admin\_user  & localhost & ALL PRIVILEGES on LibraryDB (DDL + DML) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{lstlisting}[style=sqlstyle]
+CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'secure_password';
+GRANT SELECT, INSERT, UPDATE ON LibraryDB.* TO 'app_user'@'localhost';
+GRANT EXECUTE ON PROCEDURE LibraryDB.BorrowBook TO 'app_user'@'localhost';
+GRANT EXECUTE ON PROCEDURE LibraryDB.ReturnBook TO 'app_user'@'localhost';
+FLUSH PRIVILEGES;
+\end{lstlisting}
+
+\section{Data Security Measures}
+
+\begin{itemize}
+  \item \textbf{SQL Injection Prevention:} All queries in \texttt{src/main.py} use
+        parameterized statements (\texttt{\%s} placeholders), never string concatenation.
+  \item \textbf{Domain Integrity:} CHECK constraints enforce
+        \texttt{Quantity >= 0} and \texttt{Status IN ('Borrowed','Returned')}.
+  \item \textbf{Referential Integrity:} \texttt{ON DELETE RESTRICT} prevents deletion
+        of authors or categories still referenced by books.
+  \item \textbf{Uniqueness:} UNIQUE constraints on \texttt{CategoryName} and
+        \texttt{PhoneNumber} prevent duplicate entries.
+  \item \textbf{Credentials:} For this academic project, credentials are stored in
+        source code. Production systems should use environment variables or a secrets
+        manager.
+\end{itemize}
+
+\section{Backup \& Recovery Plan}
+
+\begin{itemize}
+  \item Daily full logical backups using \texttt{mysqldump}, stored with timestamp.
+  \item Binary logging enabled for incremental backup and point-in-time recovery.
+  \item Backup files stored off-site or in cloud object storage (e.g., AWS S3).
+  \item Monthly restore drills to verify backup integrity and recovery time.
+\end{itemize}
+
+\begin{lstlisting}[style=sqlstyle, caption={Daily backup command}]
+mysqldump -u root -p LibraryDB > LibraryDB_$(date +%Y%m%d).sql
+\end{lstlisting}
+
+\section{Performance Optimization}
+
+\begin{itemize}
+  \item Indexes on \texttt{BookName} and \texttt{AuthorID} reduce full-table scans.
+  \item Views pre-join commonly accessed multi-table data, reducing query complexity.
+  \item Stored procedures execute multi-step logic server-side, minimizing round trips.
+  \item Single persistent connection avoids repeated connection overhead.
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{System Demonstration}
+
+\section{SQL Script Execution (MySQL Workbench)}
+
+\screenshot{img01_show_table.png}{SHOW TABLES -- confirms all 5 tables exist in LibraryDB}
+
+\screenshot{img02_describe_books.png}{DESCRIBE Books -- column definitions, data types, nullability, key status}
+
+\screenshot{img03_select_from_books.png}{SELECT * FROM Books -- all 10 book records with full field data}
+
+\screenshot{img04_select_from_readers.png}{SELECT * FROM Readers -- all 10 reader entries}
+
+\screenshot{img05_select_from_borrowing.png}{SELECT * FROM Borrowing -- all 10 borrowing transactions with Status}
+
+\screenshot{img06_select_from_viewdetail.png}{SELECT * FROM View\_BookDetails -- catalog view with joined author/category names}
+
+\screenshot{img07_select_from_view_borrowing_report.png}{SELECT * FROM View\_BorrowingReport -- full transaction history view}
+
+\screenshot{img08_show_index_from_books.png}{SHOW INDEX FROM Books -- confirms idx\_bookname and idx\_author are active}
+
+\section{Python CLI Application (\texttt{src/main.py})}
+
+\screenshot{img09_view_book.png}{Application start -- Connected to LibraryDB and book list}
+
+\screenshot{img10_main_menu.png}{Main menu -- all 7 options displayed}
+
+\screenshot{img11_add_book.png}{Book Management $\rightarrow$ Add -- confirm prompt with author/category lookup}
+
+\screenshot{img12_edit_book.png}{Book Management $\rightarrow$ Edit -- update quantity for a book}
+
+\screenshot{img13_delete_book.png}{Book Management $\rightarrow$ Delete -- confirm prompt showing book name}
+
+\screenshot{img14_search_book.png}{Book Management $\rightarrow$ Search -- keyword search returning matching results}
+
+\screenshot{img15_view_reader.png}{Reader Management $\rightarrow$ View -- full reader list}
+
+\screenshot{img16_add_reader.png}{Reader Management $\rightarrow$ Add Reader -- confirm prompt, success with new ID}
+
+\screenshot{img17_update_reader.png}{Reader Management $\rightarrow$ Update Reader -- updated address and phone}
+
+\screenshot{img18_view_add_author.png}{Author Management $\rightarrow$ View + Add Author}
+
+\screenshot{img19_view_cate.png}{Category Management $\rightarrow$ View -- full category list}
+
+\screenshot{img20_add_delete_cate.png}{Category Management $\rightarrow$ Add + Delete Category}
+
+\screenshot{img21_borrow_return.png}{Borrow / Return $\rightarrow$ Borrow Book -- confirm screen, borrow successful}
+
+\screenshot{img22_overdue_return.png}{Borrow / Return $\rightarrow$ Return Overdue Book -- overdue warning (days $>$ 7)}
+
+\screenshot{img23_report_borrow.png}{Reports $\rightarrow$ Borrow Details -- full borrowing history table}
+
+\screenshot{img24_overdue_and_statistic.png}{Reports $\rightarrow$ Overdue (UDF fn\_DaysOverdue) + Statistics}
+
+\screenshot{img25_top_book.png}{Reports $\rightarrow$ Top Books -- top 5 most borrowed titles}
+
+\screenshot{img26_bye.png}{Application exit -- goodbye message and successful termination}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Conclusion \& Recommendations}
+
+\section{Project Outcome Evaluation}
+
+The Library Management System successfully fulfills all requirements specified in the
+project brief. The database schema is fully normalized with comprehensive integrity
+enforcement, and all required advanced database objects have been implemented and
+demonstrated. The Python application (\texttt{src/main.py}) provides a clean and
+functional interface for every core library operation.
+
+\begin{table}[H]
+  \centering
+  \caption{Requirements Completion Summary}
+  \begin{tabularx}{\linewidth}{X C{1.8cm} L{4.5cm}}
+    \toprule
+    \textbf{Requirement} & \textbf{Status} & \textbf{Notes} \\
+    \midrule
+    5 normalized tables with FK constraints & Done & All constraints active \\
+    10 sample records per table             & Done & Plus overdue test data \\
+    Indexes (2)                             & Done & idx\_bookname, idx\_author \\
+    Views (3)                               & Done & BookDetails, BorrowingReport, OverdueReport \\
+    Stored Procedures (2)                   & Done & BorrowBook, ReturnBook \\
+    Triggers (2)                            & Done & Quantity auto-management \\
+    User-Defined Function                   & Done & fn\_DaysOverdue \\
+    Python CRUD Application                 & Done & 6 menu modules, 18+ functions \\
+    Overdue Alert System                    & Done & CLI warning + UDF report \\
+    Statistical Reports                     & Done & Stats, Top Books, Full Report \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Limitations}
+
+Despite achieving the main objectives, the system still has several limitations:
+
+\begin{enumerate}
+  \item The application is implemented as a command-line interface (CLI), which
+        may not provide an optimal user experience compared to modern graphical or
+        web-based systems.
+  \item The system does not include an authentication or authorization mechanism.
+        All users are assumed to have equal access privileges, which is not suitable
+        for real-world deployment where role-based access control is required.
+  \item Concurrency control and transaction conflicts have not been thoroughly
+        tested. In a multi-user environment, simultaneous borrowing or returning
+        actions may lead to inconsistencies without proper isolation handling.
+  \item The system does not support advanced features such as book reservation,
+        fine calculation for overdue returns, or real-time notifications. These
+        features are important in practical library systems and could be considered
+        for future development.
+\end{enumerate}
+
+\section{Recommendations for Future Improvements}
+
+\begin{enumerate}
+  \item Add a \texttt{DueDate} column to \texttt{Borrowing} and implement an automatic
+        fine calculation function based on days overdue.
+  \item Implement full-text search using a \texttt{FULLTEXT} index on
+        \texttt{Books(BookName)} for more flexible catalog search.
+  \item Migrate \texttt{src/main.py} to a web-based interface (e.g., Flask + HTML)
+        or desktop GUI (e.g., Tkinter).
+  \item Add role-based authentication at the application level, mapping login credentials
+        to MySQL user roles (librarian vs.\ administrator).
+  \item Implement an audit log table populated by triggers to track all DML operations
+        with timestamps and user context.
+  \item Add a reservation system allowing readers to reserve out-of-stock books.
+\end{enumerate}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
+
+\begin{enumerate}[label={[\arabic*]}]
+  \item MySQL 8.0 Reference Manual. Oracle Corporation.
+        \url{https://dev.mysql.com/doc/refman/8.0/en/}
+  \item mysql-connector-python Developer Guide. Oracle Corporation.
+        \url{https://dev.mysql.com/doc/connector-python/en/}
+  \item tabulate Python Library Documentation.
+        \url{https://pypi.org/project/tabulate/}
+  \item Forta, B. (2013). \textit{MySQL Crash Course}. Sams Publishing.
+  \item Hoffer, J., Ramesh, V., \& Topi, H. (2016). \textit{Modern Database Management},
+        12th Edition. Pearson.
+  \item Date, C. J. (2003). \textit{An Introduction to Database Systems}, 8th Edition.
+        Addison-Wesley.
+\end{enumerate}
+
+\end{document}
