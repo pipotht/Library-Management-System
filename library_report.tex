@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper,oneside]{report}
 
 % ── Packages ──────────────────────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
@@ -15,6 +15,7 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
+\usepackage{lastpage}
 \setlength{\headheight}{13.6pt}
 \usepackage{titlesec}
 \usepackage{setspace}
@@ -23,7 +24,36 @@
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{float}
+\setlength{\parskip}{4pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{0pt}
 
+\setlength{\headheight}{40pt}
+\pagestyle{fancy}
+\fancyhead{}
+
+\fancyhead[L]{
+ \begin{tabular}{rl}
+    \begin{picture}(25,15)(0,0)
+    \put(0,-8){\includegraphics[width=8mm, height=8mm]{final_database/NEU_Sample_report/Images/logo_1.pdf}}
+   \end{picture}&
+	\begin{tabular}{l}
+		\textbf{\bf \ttfamily Faculty of Data Science and Artificial Intelligence}
+	\end{tabular} 	
+ \end{tabular}
+}
+
+\fancyhead[R]{}
+
+\fancyfoot{}
+\fancyfoot[L]{\scriptsize \ttfamily Report Topic 01 - Semester 04 }
+\fancyfoot[R]{\scriptsize \ttfamily Page {\thepage}/\pageref{LastPage}}
+
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
 % ── Graphics path ─────────────────────────────────────────────────────────────
 \graphicspath{{final_database/docs/screenshots/}}
 
@@ -60,13 +90,7 @@
   breaklines=true, captionpos=b, showstringspaces=false, tabsize=4
 }
 
-% ── Header / Footer ───────────────────────────────────────────────────────────
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\small Library Management System}
-\fancyhead[R]{\small Introduction to Databases}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+
 
 % ── Section formatting ────────────────────────────────────────────────────────
 \titleformat{\chapter}[block]
@@ -95,9 +119,12 @@
 \newcommand{\screenshot}[2]{%
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.92\linewidth]{#1}
+    \includegraphics[width=0.85\linewidth, 
+                     height=0.28\textheight, 
+                     keepaspectratio]{#1}
     \caption{#2}
   \end{figure}%
+  \vspace{-10pt}%
 }
 
 % ══════════════════════════════════════════════════════════════════════════════
